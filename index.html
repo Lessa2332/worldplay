@@ -12,77 +12,84 @@
 
     <!-- Аніматор привида + аудіо + кнопки -->
     <script>
-        window.onload = function() {
-            AFRAME.registerComponent('ghost-animator', {
-                schema: {
-                    interval: { type: 'number', default: 150 }
-                },
-                init: function () {
-                    this.marker = this.el;
-                    this.imageEl = this.marker.querySelector('a-image');
-                    this.buttonEl = document.getElementById('audio-button');
-                    this.frames = [
-                        '#frame1', '#frame2', '#frame3', '#frame4',
-                        '#frame5', '#frame6', '#frame7', '#frame8'
-                    ];
-                    this.currentFrame = 0;
-                    this.isPlaying = false;
-                    this.intervalId = null;
+        // Реєструємо компонент ДО завантаження сцени
+        AFRAME.registerComponent('ghost-animator', {
+            schema: {
+                interval: { type: 'number', default: 120 }
+            },
+            init: function () {
+                this.marker = this.el;
+                this.imageEl = this.marker.querySelector('a-image');
+                this.buttonEl = document.getElementById('audio-button');
+                this.unmuteHint = document.getElementById('unmute-hint');
+                this.frames = [
+                    '#frame1', '#frame2', '#frame3', '#frame4',
+                    '#frame5', '#frame6', '#frame7', '#frame8'
+                ];
+                this.currentFrame = 0;
+                this.isPlaying = false;
+                this.intervalId = null;
 
-                    this.marker.addEventListener('markerFound', () => {
-                        this.startAnimation();
-                    });
+                this.marker.addEventListener('markerFound', () => {
+                    this.unmuteHint.style.display = 'block';
+                    this.startAnimation();
+                });
 
-                    this.marker.addEventListener('markerLost', () => {
-                        this.stopAnimation();
-                    });
-                },
-                startAnimation: function() {
-                    if (this.isPlaying) return;
-                    this.isPlaying = true;
-                    this.currentFrame = 0;
+                this.marker.addEventListener('markerLost', () => {
+                    this.unmuteHint.style.display = 'none';
+                    this.stopAnimation();
+                });
+            },
+            startAnimation: function() {
+                if (this.isPlaying) return;
+                this.isPlaying = true;
+                this.currentFrame = 0;
+                this.updateFrame();
+
+                this.intervalId = setInterval(() => {
+                    this.currentFrame = (this.currentFrame + 1) % this.frames.length;
                     this.updateFrame();
-
-                    this.intervalId = setInterval(() => {
-                        this.currentFrame = (this.currentFrame + 1) % this.frames.length;
-                        this.updateFrame();
-                    }, this.data.interval);
-                },
-                updateFrame: function() {
-                    this.imageEl.setAttribute('src', this.frames[this.currentFrame]);
-                    // Показуємо кнопку "Повідомлення" починаючи з 3-го кадру (індекс 2)
-                    if (this.currentFrame >= 2) {
-                        this.buttonEl.style.display = 'block';
-                    } else {
-                        this.buttonEl.style.display = 'none';
-                    }
-                },
-                stopAnimation: function() {
-                    if (!this.isPlaying) return;
-                    this.isPlaying = false;
-                    clearInterval(this.intervalId);
-                    this.imageEl.setAttribute('src', this.frames[0]);
-                    this.buttonEl.style.display = 'none';
-                },
-                remove: function() {
-                    clearInterval(this.intervalId);
-                }
-            });
-
-            // Обробник кнопки аудіо
-            document.getElementById('play-audio-btn').addEventListener('click', function() {
-                const audio = document.getElementById('ghost-audio');
-                if (audio.paused) {
-                    audio.play().catch(e => {
-                        console.log("Audio play failed:", e);
-                        alert("Дозвольте відтворення звуку у браузері.");
-                    });
+                }, this.data.interval);
+            },
+            updateFrame: function() {
+                this.imageEl.setAttribute('src', this.frames[this.currentFrame]);
+                if (this.currentFrame >= 2) {
+                    this.buttonEl.style.display = 'block';
                 } else {
-                    audio.pause();
-                    audio.currentTime = 0;
+                    this.buttonEl.style.display = 'none';
                 }
-            });
-        };
+            },
+            stopAnimation: function() {
+                if (!this.isPlaying) return;
+                this.isPlaying = false;
+                clearInterval(this.intervalId);
+                this.imageEl.setAttribute('src', this.frames[0]);
+                this.buttonEl.style.display = 'none';
+            },
+            remove: function() {
+                clearInterval(this.intervalId);
+            }
+        });
+
+        // Обробник кнопки аудіо
+        document.addEventListener('DOMContentLoaded', function() {
+            const playButton = document.getElementById('play-audio-btn');
+            const audio = document.getElementById('ghost-audio');
+
+            if (playButton && audio) {
+                playButton.addEventListener('click', function() {
+                    if (audio.paused) {
+                        audio.play().catch(e => {
+                            console.log("Audio play failed:", e);
+                            alert("Дозвольте відтворення звуку у браузері.");
+                        });
+                    } else {
+                        audio.pause();
+                        audio.currentTime = 0;
+                    }
+                });
+            }
+        });
     </script>
 
     <!-- Стилі -->
@@ -115,7 +122,7 @@
         /* Кнопка "Повідомлення" */
         #audio-button {
             position: absolute;
-            top: 20px;
+            top: 80px;
             left: 50%;
             transform: translateX(-50%);
             padding: 12px 24px;
@@ -156,6 +163,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
+            text-decoration: none; /* Важливо для <a> */
         }
         #youtube-button:hover {
             background: #cc0000;
@@ -192,7 +200,7 @@
 <body>
     <!-- Лоадер -->
     <div class="arjs-loader">
-        <div>Loading, please wait...</div>
+        <div>Завантаження, зачекайте...</div>
     </div>
 
     <!-- Підказка про звук -->
@@ -240,7 +248,6 @@
             type="nft"
             url="dataNFT/ghost_marker/ghost_marker"
             smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5"
-            position="0 0 0"
         >
             <a-image
                 src="#frame1"
@@ -255,3 +262,4 @@
     </a-scene>
 </body>
 </html>
+
