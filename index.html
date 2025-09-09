@@ -10,16 +10,17 @@
     <!-- AR.js з підтримкою NFT -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
-    <!-- Аніматор привида -->
+    <!-- Аніматор привида + аудіо + кнопки -->
     <script>
         window.onload = function() {
             AFRAME.registerComponent('ghost-animator', {
                 schema: {
-                    interval: { type: 'number', default: 150 } // швидкість анімації в мс
+                    interval: { type: 'number', default: 150 }
                 },
                 init: function () {
                     this.marker = this.el;
                     this.imageEl = this.marker.querySelector('a-image');
+                    this.buttonEl = document.getElementById('audio-button');
                     this.frames = [
                         '#frame1', '#frame2', '#frame3', '#frame4',
                         '#frame5', '#frame6', '#frame7', '#frame8'
@@ -40,27 +41,51 @@
                     if (this.isPlaying) return;
                     this.isPlaying = true;
                     this.currentFrame = 0;
-                    this.imageEl.setAttribute('src', this.frames[0]);
+                    this.updateFrame();
 
                     this.intervalId = setInterval(() => {
                         this.currentFrame = (this.currentFrame + 1) % this.frames.length;
-                        this.imageEl.setAttribute('src', this.frames[this.currentFrame]);
+                        this.updateFrame();
                     }, this.data.interval);
+                },
+                updateFrame: function() {
+                    this.imageEl.setAttribute('src', this.frames[this.currentFrame]);
+                    // Показуємо кнопку "Повідомлення" починаючи з 3-го кадру
+                    if (this.currentFrame >= 2) {
+                        this.buttonEl.style.display = 'block';
+                    } else {
+                        this.buttonEl.style.display = 'none';
+                    }
                 },
                 stopAnimation: function() {
                     if (!this.isPlaying) return;
                     this.isPlaying = false;
                     clearInterval(this.intervalId);
-                    this.imageEl.setAttribute('src', this.frames[0]); // повертаємося до першого кадру
+                    this.imageEl.setAttribute('src', this.frames[0]);
+                    this.buttonEl.style.display = 'none';
                 },
                 remove: function() {
                     clearInterval(this.intervalId);
                 }
             });
+
+            // Обробник кнопки аудіо
+            document.getElementById('play-audio-btn').addEventListener('click', function() {
+                const audio = document.getElementById('ghost-audio');
+                if (audio.paused) {
+                    audio.play().catch(e => {
+                        console.log("Audio play failed:", e);
+                        alert("Дозвольте відтворення звуку у браузері.");
+                    });
+                } else {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            });
         };
     </script>
 
-    <!-- Стилі для лоадера -->
+    <!-- Стилі -->
     <style>
         .arjs-loader {
             height: 100%;
@@ -82,6 +107,77 @@
         body {
             margin: 0;
             overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Кнопка "Повідомлення" */
+        #audio-button {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 10000;
+            display: none;
+            transition: all 0.3s ease;
+        }
+        #audio-button:hover {
+            background: #ff0000;
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        /* Кнопка SmartLessa (YouTube) */
+        #youtube-button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        #youtube-button:hover {
+            background: #cc0000;
+            transform: translateX(-50%) scale(1.05);
+        }
+        #youtube-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Підказка про звук */
+        #unmute-hint {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 16px;
+            z-index: 10000;
+            display: none;
+            text-align: center;
         }
     </style>
 </head>
@@ -90,6 +186,25 @@
     <div class="arjs-loader">
         <div>Loading, please wait...</div>
     </div>
+
+    <!-- Підказка про звук -->
+    <div id="unmute-hint">👆 Торкніться екрану, щоб увімкнути звук</div>
+
+    <!-- Кнопка "Повідомлення" -->
+    <div id="audio-button">
+        <button id="play-audio-btn">🔊 Повідомлення</button>
+    </div>
+
+    <!-- Кнопка "SmartLessa" -->
+    <a href="https://www.youtube.com/@23SmartLessa32" target="_blank" id="youtube-button">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.615 3.184c-3.604-.246-10.815-.245-14.419 0C2.38 3.372.995 5.2 1 8.273c.006 3.07 1.389 4.897 4.215 5.084 3.6.245 10.815.245 14.419 0 2.826-.187 4.215-2.014 4.221-5.085.005-3.073-1.379-4.899-4.215-5.086zM9.6 15.392V8.608l6.318 3.392L9.6 15.392z"/>
+        </svg>
+        SmartLessa
+    </a>
+
+    <!-- Аудіофайл -->
+    <audio id="ghost-audio" src="audio/ghost_message.mp3" preload="auto" crossorigin="anonymous"></audio>
 
     <!-- AR сцена -->
     <a-scene
@@ -100,7 +215,6 @@
     >
         <!-- Завантаження кадрів анімації -->
         <a-assets>
-            <!-- Заміни шляхи на свої PNG-файли -->
             <img id="frame1" src="assets/ghost/1.png" crossorigin="anonymous">
             <img id="frame2" src="assets/ghost/2.png" crossorigin="anonymous">
             <img id="frame3" src="assets/ghost/3.png" crossorigin="anonymous">
@@ -112,14 +226,12 @@
         </a-assets>
 
         <!-- NFT маркер -->
-        <!-- Заміни 'dataNFT/ghost_marker/ghost_marker' на шлях до твого NFT-маркера -->
         <a-nft
             ghost-animator="interval: 120"
             type="nft"
             url="dataNFT/ghost_marker/ghost_marker"
             smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5"
         >
-            <!-- Зображення, що анімується -->
             <a-image
                 src="#frame1"
                 position="50 150 -100"
@@ -129,7 +241,6 @@
             ></a-image>
         </a-nft>
 
-        <!-- Камера -->
         <a-entity camera></a-entity>
     </a-scene>
 </body>
