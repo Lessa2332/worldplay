@@ -90,6 +90,16 @@
                 });
             }
         });
+
+        // Дебаг: перевірка завантаження NFT-маркера
+        document.addEventListener('arjs-nft-loaded', function() {
+            console.log('✅ NFT маркер завантажено!');
+            document.querySelector('.arjs-loader').style.display = 'none';
+        });
+
+        document.addEventListener('arjs-nft-error', function(e) {
+            console.error('❌ Помилка завантаження NFT:', e.detail);
+        });
     </script>
 
     <!-- Стилі -->
@@ -247,7 +257,6 @@
             ghost-animator="interval: 120"
             type="nft"
             url="dataNFT/ghost_marker/ghost_marker"
-            smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5"
         >
             <a-image
                 src="#frame1"
@@ -262,4 +271,3 @@
     </a-scene>
 </body>
 </html>
-
