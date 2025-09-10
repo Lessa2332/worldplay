@@ -230,7 +230,7 @@
     </a>
 
     <!-- Аудіофайл -->
-    <audio id="ghost-audio" src="https://github.com/Lessa2332/halloween/raw/refs/heads/main/audio/ghost_message.mp3" preload="auto" crossorigin="anonymous"></audio>
+    <audio id="ghost-audio" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/audio/ghost_message.mp3" preload="auto" crossorigin="anonymous"></audio>
 
     <!-- AR сцена -->
     <a-scene
@@ -242,21 +242,21 @@
     >
         <!-- Завантаження кадрів анімації -->
         <a-assets>
-            <img id="frame1" src="https://raw.githubusercontent.com/Lessa2332/halloween/refs/heads/main/assets/ghost/1.png" crossorigin="anonymous">
-            <img id="frame2" src="https://raw.githubusercontent.com/Lessa2332/halloween/refs/heads/main/assets/ghost/2.png" crossorigin="anonymous">
-            <img id="frame3" src="https://raw.githubusercontent.com/Lessa2332/halloween/refs/heads/main/assets/ghost/3.png" crossorigin="anonymous">
-            <img id="frame4" src="https://raw.githubusercontent.com/Lessa2332/halloween/refs/heads/main/assets/ghost/4.png" crossorigin="anonymous">
-            <img id="frame5" src="https://raw.githubusercontent.com/Lessa2332/halloween/refs/heads/main/assets/ghost/5.png" crossorigin="anonymous">
-            <img id="frame6" src="https://raw.githubusercontent.com/Lessa2332/halloween/refs/heads/main/assets/ghost/6.png" crossorigin="anonymous">
-            <img id="frame7" src="https://raw.githubusercontent.com/Lessa2332/halloween/refs/heads/main/assets/ghost/7.png" crossorigin="anonymous">
-            <img id="frame8" src="https://raw.githubusercontent.com/Lessa2332/halloween/refs/heads/main/assets/ghost/8.png" crossorigin="anonymous">
+            <img id="frame1" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/1.png" crossorigin="anonymous">
+            <img id="frame2" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/2.png" crossorigin="anonymous">
+            <img id="frame3" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/3.png" crossorigin="anonymous">
+            <img id="frame4" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/4.png" crossorigin="anonymous">
+            <img id="frame5" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/5.png" crossorigin="anonymous">
+            <img id="frame6" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/6.png" crossorigin="anonymous">
+            <img id="frame7" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/7.png" crossorigin="anonymous">
+            <img id="frame8" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/8.png" crossorigin="anonymous">
         </a-assets>
 
-        <!-- NFT маркер -->
+        <!-- NFT маркер (ВИПРАВЛЕНО: Використовуємо raw.githack.com для уникнення CORS) -->
         <a-nft
             ghost-animator="interval: 120"
             type="nft"
-            url="https://github.com/Lessa2332/halloween/raw/refs/heads/main/dataNFT/ghost_marker/ghost_marker"
+            url="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/dataNFT/ghost_marker/ghost_marker"
         >
             <a-image
                 src="#frame1"
@@ -271,4 +271,3 @@
     </a-scene>
 </body>
 </html>
-
