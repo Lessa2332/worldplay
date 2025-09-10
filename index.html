@@ -204,7 +204,7 @@
         SmartLessa
     </a>
 
-    <audio id="ghost-audio" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/audio/ghost_message.mp3" preload="auto" crossorigin="anonymous"></audio>
+    <audio id="ghost-audio" src="https://raw.githack.com/Lessa2332/77/refs/heads/main/audio/ghost_message.mp3" preload="auto" crossorigin="anonymous"></audio>
 
     <a-scene
         vr-mode-ui="enabled: false"
@@ -214,15 +214,15 @@
         style="width: 100%; height: 100%;"
     >
         <a-assets>
-            <!-- ✅ Одне PNG -->
-            <img id="ghost-single" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/1.png" crossorigin="anonymous">
+            <!-- ✅ Одне PNG з нової папки 77 -->
+            <img id="ghost-single" src="https://raw.githack.com/Lessa2332/77/refs/heads/main/assets/ghost/1.png" crossorigin="anonymous">
         </a-assets>
 
         <!-- ✅ Використовуємо ghost-show -->
         <a-nft
             ghost-show
             type="nft"
-            url="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/dataNFT/ghost_marker/ghost_marker"
+            url="https://raw.githack.com/Lessa2332/77/refs/heads/main/dataNFT/ghost_marker/ghost_marker"
         >
             <!-- ✅ PNG з правильними параметрами -->
             <a-image
@@ -232,7 +232,8 @@
                 width="0.8"
                 height="0.47"
                 transparent="true"
-                alpha-test="0.5"
+                alpha-test="0.1"
+                material="side: double; shader: standard;"
                 visible="false"
             ></a-image>
         </a-nft>
