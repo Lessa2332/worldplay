@@ -150,7 +150,8 @@
         style="display: none; width: 100%; height: 100%;"
     >
         <a-assets>
-            <img id="ghost-single" src="https://raw.githack.com/Lessa2332/77/refs/heads/main/assets/ghost/1.png" crossorigin="anonymous">
+            <!-- ✅ Замінено на гарантовано робочий лого A-Frame -->
+            <img id="ghost-single" src="https://cdn.aframe.io/aframe-logo.png" crossorigin="anonymous">
         </a-assets>
 
         <a-nft
@@ -189,7 +190,6 @@
                 startButton.style.display = 'none';
                 hint.style.display = 'block';
                 scene.style.display = 'block';
-                // AR.js автоматично запустить камеру при відображенні сцени
             });
 
             // 2. Відстеження маркера
@@ -201,13 +201,20 @@
                         if (ghostPlane) {
                             ghostPlane.setAttribute('visible', true);
                             console.log("🖼️ Привид показано");
+
+                            // ✅ Примусове оновлення текстури
+                            const material = ghostPlane.components.material.material;
+                            if (material && material.map) {
+                                material.map.needsUpdate = true;
+                                material.needsUpdate = true;
+                                console.log("🔄 Текстура примусово оновлена");
+                            }
                         }
-                        // Показати кнопку аудіо через 1.5 секунди
                         setTimeout(() => {
                             audioButton.style.display = 'block';
                             hint.innerText = "Натисніть, щоб послухати повідомлення";
                         }, 1500);
-                    }, 500); // Невелика затримка для стабільності
+                    }, 500);
                 });
 
                 nftMarker.addEventListener('markerLost', () => {
