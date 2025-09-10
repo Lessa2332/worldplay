@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AR Ghost - Single Image</title>
+    <title>AR Ghost - Single PNG</title>
 
     <!-- A-Frame -->
     <script src="https://cdn.jsdelivr.net/npm/aframe@1.6.0/dist/aframe-master.min.js"></script>
@@ -11,26 +11,53 @@
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
     <script>
+        // ✅ Простий і надійний компонент — показує PNG при знаходженні маркера
         AFRAME.registerComponent('ghost-show', {
             init: function () {
+                console.log("👻 Компонент ghost-show ініціалізовано");
+
                 const marker = this.el;
                 const buttonEl = document.getElementById('audio-button');
                 const unmuteHint = document.getElementById('unmute-hint');
+                const imageEl = marker.querySelector('a-image');
+
+                if (!imageEl) {
+                    console.error("❌ Не знайдено <a-image> всередині маркера!");
+                    // Додаємо fallback-кубик для тесту
+                    const fallback = document.createElement('a-box');
+                    fallback.setAttribute('color', 'red');
+                    fallback.setAttribute('depth', '0.1');
+                    fallback.setAttribute('height', '0.1');
+                    fallback.setAttribute('width', '0.1');
+                    fallback.setAttribute('position', '0 0.1 -0.3');
+                    marker.appendChild(fallback);
+                    console.log("✅ Додано червоний кубик для тесту");
+                } else {
+                    console.log("✅ <a-image> знайдено!");
+                }
 
                 marker.addEventListener('markerFound', () => {
-                    console.log("✅ Маркер знайдено — показуємо контент!");
+                    console.log("✅ Маркер знайдено!");
                     unmuteHint.style.display = 'block';
                     buttonEl.style.display = 'block';
+                    if (imageEl) {
+                        imageEl.setAttribute('visible', true);
+                        console.log("🖼️ PNG встановлено як видиме");
+                    }
                 });
 
                 marker.addEventListener('markerLost', () => {
-                    console.log("❌ Маркер втрачено — ховаємо контент.");
+                    console.log("❌ Маркер втрачено");
                     unmuteHint.style.display = 'none';
                     buttonEl.style.display = 'none';
+                    if (imageEl) {
+                        imageEl.setAttribute('visible', false);
+                    }
                 });
             }
         });
 
+        // Обробник кнопки аудіо
         document.addEventListener('DOMContentLoaded', function() {
             const playButton = document.getElementById('play-audio-btn');
             const audio = document.getElementById('ghost-audio');
@@ -50,6 +77,7 @@
             }
         });
 
+        // Дебаг NFT
         document.addEventListener('arjs-nft-loaded', function() {
             console.log('✅ NFT маркер завантажено!');
             document.querySelector('.arjs-loader').style.display = 'none';
@@ -186,15 +214,17 @@
         style="width: 100%; height: 100%;"
     >
         <a-assets>
-            <!-- Використовуємо ТІЛЬКИ ОДНЕ зображення -->
+            <!-- ✅ Одне PNG -->
             <img id="ghost-single" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/1.png" crossorigin="anonymous">
         </a-assets>
 
+        <!-- ✅ Використовуємо ghost-show -->
         <a-nft
             ghost-show
             type="nft"
             url="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/dataNFT/ghost_marker/ghost_marker"
         >
+            <!-- ✅ PNG з правильними параметрами -->
             <a-image
                 src="#ghost-single"
                 position="0 0.1 -0.3"
@@ -203,6 +233,7 @@
                 height="0.47"
                 transparent="true"
                 alpha-test="0.5"
+                visible="false"
             ></a-image>
         </a-nft>
 
