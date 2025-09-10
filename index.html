@@ -225,7 +225,7 @@
             url="https://raw.githack.com/Lessa2332/77/refs/heads/main/dataNFT/ghost_marker/ghost_marker"
         >
             <!-- ✅ PNG з правильними параметрами -->
-<a-plane
+<a-image
     src="#ghost-single"
     position="0 0.1 -0.3"
     rotation="-90 0 0"
@@ -233,13 +233,14 @@
     height="0.47"
     transparent="true"
     alpha-test="0.1"
-    material="side: double; shader: standard;"
-    visible="false"
-></a-plane>
+    material="side: double; shader: standard; transparent: true;"
+    visible="true"
+></a-image>
         </a-nft>
 
         <a-entity camera></a-entity>
     </a-scene>
 </body>
 </html>
+
 
