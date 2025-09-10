@@ -3,113 +3,56 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AR Ghost - Single PNG</title>
+    <title>AR Ghost - Крок за кроком</title>
 
     <!-- A-Frame -->
     <script src="https://cdn.jsdelivr.net/npm/aframe@1.6.0/dist/aframe-master.min.js"></script>
     <!-- AR.js з підтримкою NFT -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
-    <script>
-        // ✅ Простий і надійний компонент — показує PNG при знаходженні маркера
-        AFRAME.registerComponent('ghost-show', {
-            init: function () {
-                console.log("👻 Компонент ghost-show ініціалізовано");
-
-                const marker = this.el;
-                const buttonEl = document.getElementById('audio-button');
-                const unmuteHint = document.getElementById('unmute-hint');
-                const imageEl = marker.querySelector('a-image');
-
-                if (!imageEl) {
-                    console.error("❌ Не знайдено <a-image> всередині маркера!");
-                    // Додаємо fallback-кубик для тесту
-                    const fallback = document.createElement('a-box');
-                    fallback.setAttribute('color', 'red');
-                    fallback.setAttribute('depth', '0.1');
-                    fallback.setAttribute('height', '0.1');
-                    fallback.setAttribute('width', '0.1');
-                    fallback.setAttribute('position', '0 0.1 -0.3');
-                    marker.appendChild(fallback);
-                    console.log("✅ Додано червоний кубик для тесту");
-                } else {
-                    console.log("✅ <a-image> знайдено!");
-                }
-
-                marker.addEventListener('markerFound', () => {
-                    console.log("✅ Маркер знайдено!");
-                    unmuteHint.style.display = 'block';
-                    buttonEl.style.display = 'block';
-                    if (imageEl) {
-                        imageEl.setAttribute('visible', true);
-                        console.log("🖼️ PNG встановлено як видиме");
-                    }
-                });
-
-                marker.addEventListener('markerLost', () => {
-                    console.log("❌ Маркер втрачено");
-                    unmuteHint.style.display = 'none';
-                    buttonEl.style.display = 'none';
-                    if (imageEl) {
-                        imageEl.setAttribute('visible', false);
-                    }
-                });
-            }
-        });
-
-        // Обробник кнопки аудіо
-        document.addEventListener('DOMContentLoaded', function() {
-            const playButton = document.getElementById('play-audio-btn');
-            const audio = document.getElementById('ghost-audio');
-
-            if (playButton && audio) {
-                playButton.addEventListener('click', function() {
-                    if (audio.paused) {
-                        audio.play().catch(e => {
-                            console.log("Audio play failed:", e);
-                            alert("Дозвольте відтворення звуку у браузері.");
-                        });
-                    } else {
-                        audio.pause();
-                        audio.currentTime = 0;
-                    }
-                });
-            }
-        });
-
-        // Дебаг NFT
-        document.addEventListener('arjs-nft-loaded', function() {
-            console.log('✅ NFT маркер завантажено!');
-            document.querySelector('.arjs-loader').style.display = 'none';
-        });
-
-        document.addEventListener('arjs-nft-error', function(e) {
-            console.error('❌ Помилка завантаження NFT:', e.detail);
-        });
-    </script>
-
     <style>
-        .arjs-loader {
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 1.25em;
-        }
-
         body {
             margin: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
             width: 100vw;
             height: 100vh;
+            background: #000;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #start-button {
+            padding: 16px 32px;
+            background: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            z-index: 10000;
+            transition: all 0.3s ease;
+        }
+        #start-button:hover {
+            background: #ff0000;
+            transform: scale(1.05);
+        }
+
+        #hint {
+            position: absolute;
+            top: 20px;
+            text-align: center;
+            font-size: 18px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: none;
+            z-index: 10000;
         }
 
         #audio-button {
@@ -165,19 +108,8 @@
             height: 24px;
         }
 
-        #unmute-hint {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 16px;
-            z-index: 10000;
-            display: none;
-            text-align: center;
+        .arjs-loader {
+            display: none !important;
         }
 
         .a-canvas {
@@ -187,16 +119,18 @@
     </style>
 </head>
 <body>
-    <div class="arjs-loader">
-        <div>Завантаження, зачекайте...</div>
-    </div>
+    <!-- Кнопка для початку AR -->
+    <button id="start-button">👻 Запустити AR-досвід</button>
 
-    <div id="unmute-hint">👆 Торкніться екрану, щоб увімкнути звук</div>
+    <!-- Підказка -->
+    <div id="hint">👆 Наведіть камеру на маркер</div>
 
+    <!-- Кнопка аудіо -->
     <div id="audio-button">
-        <button id="play-audio-btn">🔊 Повідомлення</button>
+        <button id="play-audio-btn">🔊 Послухати повідомлення</button>
     </div>
 
+    <!-- Кнопка YouTube -->
     <a href="https://www.youtube.com/@23SmartLessa32" target="_blank" id="youtube-button">
         <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M19.615 3.184c-3.604-.246-10.815-.245-14.419 0C2.38 3.372.995 5.2 1 8.273c.006 3.07 1.389 4.897 4.215 5.084 3.6.245 10.815.245 14.419 0 2.826-.187 4.215-2.014 4.221-5.085.005-3.073-1.379-4.899-4.215-5.086zM9.6 15.392V8.608l6.318 3.392L9.6 15.392z"/>
@@ -204,44 +138,101 @@
         SmartLessa
     </a>
 
+    <!-- Аудіо -->
     <audio id="ghost-audio" src="https://raw.githack.com/Lessa2332/77/refs/heads/main/audio/ghost_message.mp3" preload="auto" crossorigin="anonymous"></audio>
 
+    <!-- Сцена (спочатку прихована) -->
     <a-scene
-        vr-mode-ui="enabled: false"
-        renderer="antialias: true; alpha: true; precision: medium;"
+        id="ar-scene"
         embedded
         arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
-        style="width: 100%; height: 100%;"
+        renderer="antialias: true; alpha: true; precision: medium;"
+        style="display: none; width: 100%; height: 100%;"
     >
         <a-assets>
-            <!-- ✅ Одне PNG з нової папки 77 -->
-            <img id="ghost-single" src="https://cdn.aframe.io/aframe-logo.png" crossorigin="anonymous">
+            <img id="ghost-single" src="https://raw.githack.com/Lessa2332/77/refs/heads/main/assets/ghost/1.png" crossorigin="anonymous">
         </a-assets>
 
-        <!-- ✅ Використовуємо ghost-show -->
         <a-nft
-            ghost-show
+            id="nft-marker"
             type="nft"
             url="https://raw.githack.com/Lessa2332/77/refs/heads/main/dataNFT/ghost_marker/ghost_marker"
         >
-            <!-- ✅ PNG з правильними параметрами -->
-<a-image
-    src="#ghost-single"
-    position="0 0.1 -0.3"
-    rotation="-90 0 0"
-    width="0.8"
-    height="0.47"
-    transparent="true"
-    alpha-test="0.1"
-    material="side: double; shader: standard; transparent: true;"
-    visible="true"
-></a-image>
+            <a-plane
+                id="ghost-plane"
+                src="#ghost-single"
+                position="0 0.1 -0.3"
+                rotation="-90 0 0"
+                width="0.8"
+                height="0.47"
+                material="side: double; shader: standard; transparent: true; alphaTest: 0.1;"
+                visible="false"
+            ></a-plane>
         </a-nft>
 
         <a-entity camera></a-entity>
     </a-scene>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const startButton = document.getElementById('start-button');
+            const hint = document.getElementById('hint');
+            const audioButton = document.getElementById('audio-button');
+            const playAudioBtn = document.getElementById('play-audio-btn');
+            const audio = document.getElementById('ghost-audio');
+            const scene = document.getElementById('ar-scene');
+            const ghostPlane = document.getElementById('ghost-plane');
+            const nftMarker = document.getElementById('nft-marker');
+
+            // 1. Запуск AR при натисканні
+            startButton.addEventListener('click', function() {
+                startButton.style.display = 'none';
+                hint.style.display = 'block';
+                scene.style.display = 'block';
+                // AR.js автоматично запустить камеру при відображенні сцени
+            });
+
+            // 2. Відстеження маркера
+            if (nftMarker) {
+                nftMarker.addEventListener('markerFound', () => {
+                    console.log("✅ Маркер знайдено!");
+                    hint.innerText = "👻 Привид з'явився!";
+                    setTimeout(() => {
+                        if (ghostPlane) {
+                            ghostPlane.setAttribute('visible', true);
+                            console.log("🖼️ Привид показано");
+                        }
+                        // Показати кнопку аудіо через 1.5 секунди
+                        setTimeout(() => {
+                            audioButton.style.display = 'block';
+                            hint.innerText = "Натисніть, щоб послухати повідомлення";
+                        }, 1500);
+                    }, 500); // Невелика затримка для стабільності
+                });
+
+                nftMarker.addEventListener('markerLost', () => {
+                    console.log("❌ Маркер втрачено");
+                    hint.innerText = "👆 Наведіть камеру на маркер";
+                    audioButton.style.display = 'none';
+                    if (ghostPlane) {
+                        ghostPlane.setAttribute('visible', false);
+                    }
+                });
+            }
+
+            // 3. Відтворення аудіо
+            playAudioBtn.addEventListener('click', function() {
+                if (audio.paused) {
+                    audio.play().catch(e => {
+                        console.log("Audio play failed:", e);
+                        alert("Дозвольте відтворення звуку у браузері.");
+                    });
+                } else {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
