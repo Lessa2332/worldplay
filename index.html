@@ -13,63 +13,89 @@
     <!-- Аніматор привида + аудіо + кнопки -->
     <script>
         // Реєструємо компонент ДО завантаження сцени
-        AFRAME.registerComponent('ghost-animator', {
-            schema: {
-                interval: { type: 'number', default: 120 }
-            },
-            init: function () {
-                this.marker = this.el;
-                this.imageEl = this.marker.querySelector('a-image');
-                this.buttonEl = document.getElementById('audio-button');
-                this.unmuteHint = document.getElementById('unmute-hint');
-                this.frames = [
-                    '#frame1', '#frame2', '#frame3', '#frame4',
-                    '#frame5', '#frame6', '#frame7', '#frame8'
-                ];
-                this.currentFrame = 0;
-                this.isPlaying = false;
-                this.intervalId = null;
+   AFRAME.registerComponent('ghost-animator', {
+    schema: {
+        interval: { type: 'number', default: 120 },
+        mode: { type: 'string', default: 'table' }
+    },
+    init: function () {
+        this.marker = this.el;
+        this.imageEl = this.marker.querySelector('a-image');
+        this.buttonEl = document.getElementById('audio-button');
+        this.unmuteHint = document.getElementById('unmute-hint');
+        this.frames = [
+            '#frame1', '#frame2', '#frame3', '#frame4',
+            '#frame5', '#frame6', '#frame7', '#frame8'
+        ];
+        this.currentFrame = 0;
+        this.isPlaying = false;
+        this.intervalId = null;
+        this.buttonVisible = false; // 🆕 новий прапорець
 
-                this.marker.addEventListener('markerFound', () => {
-                    this.unmuteHint.style.display = 'block';
-                    this.startAnimation();
-                });
-
-                this.marker.addEventListener('markerLost', () => {
-                    this.unmuteHint.style.display = 'none';
-                    this.stopAnimation();
-                });
-            },
-            startAnimation: function() {
-                if (this.isPlaying) return;
-                this.isPlaying = true;
-                this.currentFrame = 0;
-                this.updateFrame();
-
-                this.intervalId = setInterval(() => {
-                    this.currentFrame = (this.currentFrame + 1) % this.frames.length;
-                    this.updateFrame();
-                }, this.data.interval);
-            },
-            updateFrame: function() {
-                this.imageEl.setAttribute('src', this.frames[this.currentFrame]);
-                if (this.currentFrame >= 2) {
-                    this.buttonEl.style.display = 'block';
-                } else {
-                    this.buttonEl.style.display = 'none';
-                }
-            },
-            stopAnimation: function() {
-                if (!this.isPlaying) return;
-                this.isPlaying = false;
-                clearInterval(this.intervalId);
-                this.imageEl.setAttribute('src', this.frames[0]);
-                this.buttonEl.style.display = 'none';
-            },
-            remove: function() {
-                clearInterval(this.intervalId);
-            }
+        this.marker.addEventListener('markerFound', () => {
+            this.unmuteHint.style.display = 'block';
+            this.startAnimation();
+            this.updateGhostOrientation();
         });
+
+        this.marker.addEventListener('markerLost', () => {
+            this.unmuteHint.style.display = 'none';
+            this.stopAnimation();
+        });
+    },
+
+    updateGhostOrientation: function() {
+        const mode = this.data.mode;
+        const imageEl = this.imageEl;
+
+        if (mode === 'table') {
+            imageEl.setAttribute('position', '0 0.1 -0.3');
+            imageEl.setAttribute('rotation', '-90 0 0');
+            imageEl.setAttribute('width', '0.8');
+            imageEl.setAttribute('height', '0.47');
+        } else if (mode === 'wall') {
+            imageEl.setAttribute('position', '0 0.15 -0.2');
+            imageEl.setAttribute('rotation', '-15 0 0');
+            imageEl.setAttribute('width', '0.6');
+            imageEl.setAttribute('height', '0.35');
+        }
+    },
+
+    startAnimation: function() {
+        if (this.isPlaying) return;
+        this.isPlaying = true;
+        this.currentFrame = 0;
+        this.updateFrame();
+
+        this.intervalId = setInterval(() => {
+            this.currentFrame = (this.currentFrame + 1) % this.frames.length;
+            this.updateFrame();
+        }, this.data.interval);
+    },
+
+    updateFrame: function() {
+        this.imageEl.setAttribute('src', this.frames[this.currentFrame]);
+
+        // 🆕 Показуємо кнопку ОДИН РАЗ, коли досягли кадру 2, і більше не ховаємо
+        if (!this.buttonVisible && this.currentFrame >= 2) {
+            this.buttonEl.style.display = 'block';
+            this.buttonVisible = true; // запам’ятовуємо, що кнопку вже показали
+        }
+    },
+
+    stopAnimation: function() {
+        if (!this.isPlaying) return;
+        this.isPlaying = false;
+        clearInterval(this.intervalId);
+        this.imageEl.setAttribute('src', this.frames[0]);
+        this.buttonEl.style.display = 'none';
+        this.buttonVisible = false; // 🆕 скидаємо стан при втраті маркера
+    },
+
+    remove: function() {
+        clearInterval(this.intervalId);
+    }
+});
 
         // Обробник кнопки аудіо
         document.addEventListener('DOMContentLoaded', function() {
@@ -273,6 +299,7 @@
     </a-scene>
 </body>
 </html>
+
 
 
 
