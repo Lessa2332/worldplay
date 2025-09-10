@@ -3,99 +3,35 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AR Ghost Animation</title>
+    <title>AR Ghost - Single PNG</title>
 
     <!-- A-Frame -->
     <script src="https://cdn.jsdelivr.net/npm/aframe@1.6.0/dist/aframe-master.min.js"></script>
     <!-- AR.js з підтримкою NFT -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
-    <!-- Аніматор привида + аудіо + кнопки -->
     <script>
-        // Реєструємо компонент ДО завантаження сцени
-   AFRAME.registerComponent('ghost-animator', {
-    schema: {
-        interval: { type: 'number', default: 120 },
-        mode: { type: 'string', default: 'table' }
-    },
-    init: function () {
-        this.marker = this.el;
-        this.imageEl = this.marker.querySelector('a-image');
-        this.buttonEl = document.getElementById('audio-button');
-        this.unmuteHint = document.getElementById('unmute-hint');
-        this.frames = [
-            '#frame1', '#frame2', '#frame3', '#frame4',
-            '#frame5', '#frame6', '#frame7', '#frame8'
-        ];
-        this.currentFrame = 0;
-        this.isPlaying = false;
-        this.intervalId = null;
-        this.buttonVisible = false; // 🆕 новий прапорець
+        // Простий компонент — показує PNG і кнопку при знаходженні маркера
+        AFRAME.registerComponent('ghost-show', {
+            init: function () {
+                this.marker = this.el;
+                this.imageEl = this.marker.querySelector('a-image');
+                this.buttonEl = document.getElementById('audio-button');
+                this.unmuteHint = document.getElementById('unmute-hint');
 
-        this.marker.addEventListener('markerFound', () => {
-            this.unmuteHint.style.display = 'block';
-            this.startAnimation();
-            this.updateGhostOrientation();
+                this.marker.addEventListener('markerFound', () => {
+                    console.log("✅ Маркер знайдено — показуємо привида!");
+                    this.unmuteHint.style.display = 'block';
+                    this.buttonEl.style.display = 'block';
+                });
+
+                this.marker.addEventListener('markerLost', () => {
+                    console.log("❌ Маркер втрачено — ховаємо привида.");
+                    this.unmuteHint.style.display = 'none';
+                    this.buttonEl.style.display = 'none';
+                });
+            }
         });
-
-        this.marker.addEventListener('markerLost', () => {
-            this.unmuteHint.style.display = 'none';
-            this.stopAnimation();
-        });
-    },
-
-    updateGhostOrientation: function() {
-        const mode = this.data.mode;
-        const imageEl = this.imageEl;
-
-        if (mode === 'table') {
-            imageEl.setAttribute('position', '0 0.1 -0.3');
-            imageEl.setAttribute('rotation', '-90 0 0');
-            imageEl.setAttribute('width', '0.8');
-            imageEl.setAttribute('height', '0.47');
-        } else if (mode === 'wall') {
-            imageEl.setAttribute('position', '0 0.15 -0.2');
-            imageEl.setAttribute('rotation', '-15 0 0');
-            imageEl.setAttribute('width', '0.6');
-            imageEl.setAttribute('height', '0.35');
-        }
-    },
-
-    startAnimation: function() {
-        if (this.isPlaying) return;
-        this.isPlaying = true;
-        this.currentFrame = 0;
-        this.updateFrame();
-
-        this.intervalId = setInterval(() => {
-            this.currentFrame = (this.currentFrame + 1) % this.frames.length;
-            this.updateFrame();
-        }, this.data.interval);
-    },
-
-    updateFrame: function() {
-        this.imageEl.setAttribute('src', this.frames[this.currentFrame]);
-
-        // 🆕 Показуємо кнопку ОДИН РАЗ, коли досягли кадру 2, і більше не ховаємо
-        if (!this.buttonVisible && this.currentFrame >= 2) {
-            this.buttonEl.style.display = 'block';
-            this.buttonVisible = true; // запам’ятовуємо, що кнопку вже показали
-        }
-    },
-
-    stopAnimation: function() {
-        if (!this.isPlaying) return;
-        this.isPlaying = false;
-        clearInterval(this.intervalId);
-        this.imageEl.setAttribute('src', this.frames[0]);
-        this.buttonEl.style.display = 'none';
-        this.buttonVisible = false; // 🆕 скидаємо стан при втраті маркера
-    },
-
-    remove: function() {
-        clearInterval(this.intervalId);
-    }
-});
 
         // Обробник кнопки аудіо
         document.addEventListener('DOMContentLoaded', function() {
@@ -117,7 +53,7 @@
             }
         });
 
-        // Дебаг: перевірка завантаження NFT-маркера
+        // Дебаг NFT
         document.addEventListener('arjs-nft-loaded', function() {
             console.log('✅ NFT маркер завантажено!');
             document.querySelector('.arjs-loader').style.display = 'none';
@@ -128,7 +64,6 @@
         });
     </script>
 
-    <!-- Стилі -->
     <style>
         .arjs-loader {
             height: 100%;
@@ -141,12 +76,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        .arjs-loader div {
-            text-align: center;
-            font-size: 1.25em;
             color: white;
+            font-size: 1.25em;
         }
+
         body {
             margin: 0;
             overflow: hidden;
@@ -155,7 +88,6 @@
             height: 100vh;
         }
 
-        /* Кнопка "Повідомлення" */
         #audio-button {
             position: absolute;
             top: 80px;
@@ -179,7 +111,6 @@
             transform: translateX(-50%) scale(1.05);
         }
 
-        /* Кнопка SmartLessa (YouTube) */
         #youtube-button {
             position: absolute;
             bottom: 20px;
@@ -199,7 +130,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
-            text-decoration: none; /* Важливо для <a> */
+            text-decoration: none;
         }
         #youtube-button:hover {
             background: #cc0000;
@@ -210,7 +141,6 @@
             height: 24px;
         }
 
-        /* Підказка про звук */
         #unmute-hint {
             position: absolute;
             top: 20px;
@@ -226,7 +156,6 @@
             text-align: center;
         }
 
-        /* Фікс для повного екрану */
         .a-canvas {
             width: 100vw !important;
             height: 100vh !important;
@@ -234,20 +163,16 @@
     </style>
 </head>
 <body>
-    <!-- Лоадер -->
     <div class="arjs-loader">
         <div>Завантаження, зачекайте...</div>
     </div>
 
-    <!-- Підказка про звук -->
     <div id="unmute-hint">👆 Торкніться екрану, щоб увімкнути звук</div>
 
-    <!-- Кнопка "Повідомлення" -->
     <div id="audio-button">
         <button id="play-audio-btn">🔊 Повідомлення</button>
     </div>
 
-    <!-- Кнопка "SmartLessa" -->
     <a href="https://www.youtube.com/@23SmartLessa32" target="_blank" id="youtube-button">
         <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M19.615 3.184c-3.604-.246-10.815-.245-14.419 0C2.38 3.372.995 5.2 1 8.273c.006 3.07 1.389 4.897 4.215 5.084 3.6.245 10.815.245 14.419 0 2.826-.187 4.215-2.014 4.221-5.085.005-3.073-1.379-4.899-4.215-5.086zM9.6 15.392V8.608l6.318 3.392L9.6 15.392z"/>
@@ -255,10 +180,8 @@
         SmartLessa
     </a>
 
-    <!-- Аудіофайл -->
     <audio id="ghost-audio" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/audio/ghost_message.mp3" preload="auto" crossorigin="anonymous"></audio>
 
-    <!-- AR сцена -->
     <a-scene
         vr-mode-ui="enabled: false"
         renderer="antialias: true; alpha: true; precision: medium;"
@@ -266,42 +189,28 @@
         arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
         style="width: 100%; height: 100%;"
     >
-        <!-- Завантаження кадрів анімації -->
         <a-assets>
-            <img id="frame1" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/1.png" crossorigin="anonymous">
-            <img id="frame2" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/2.png" crossorigin="anonymous">
-            <img id="frame3" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/3.png" crossorigin="anonymous">
-            <img id="frame4" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/4.png" crossorigin="anonymous">
-            <img id="frame5" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/5.png" crossorigin="anonymous">
-            <img id="frame6" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/6.png" crossorigin="anonymous">
-            <img id="frame7" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/7.png" crossorigin="anonymous">
-            <img id="frame8" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/8.png" crossorigin="anonymous">
+            <!-- Залишаємо ТІЛЬКИ ОДНЕ зображення -->
+            <img id="ghost-single" src="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/assets/ghost/1.png" crossorigin="anonymous">
         </a-assets>
 
-        <!-- NFT маркер (ВИПРАВЛЕНО: Використовуємо raw.githack.com для уникнення CORS) -->
         <a-nft
-            ghost-animator="interval: 120"
+            ghost-show
             type="nft"
             url="https://raw.githack.com/Lessa2332/halloween/refs/heads/main/dataNFT/ghost_marker/ghost_marker"
         >
-<a-image
-    src="#frame1"
-    position="0 0.1 -0.3"
-    rotation="-90 0 0"
-    width="0.8"
-    height="0.47"
-    transparent="true"
-    alpha-test="0.5"
-></a-image>
+            <a-image
+                src="#ghost-single"
+                position="0 0.1 -0.3"
+                rotation="-90 0 0"
+                width="0.8"
+                height="0.47"
+                transparent="true"
+                alpha-test="0.5"
+            ></a-image>
         </a-nft>
 
         <a-entity camera></a-entity>
     </a-scene>
 </body>
 </html>
-
-
-
-
-
-
