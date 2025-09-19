@@ -145,11 +145,24 @@
         #quizResult {
             font-size: 1.5em;
             margin-top: 30px;
+            margin-bottom: 20px; /* Додано відступ, щоб кнопка не прилягала впритул */
         }
         #restartQuizBtn {
-            margin-top: 30px;
+            /* Видалено position: fixed; та інші властивості, що спричиняли перекриття */
             background: linear-gradient(45deg, #FF6F00, #FFD700);
             color: white;
+            padding: 16px 30px;
+            border-radius: 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: none;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #restartQuizBtn:hover {
+             transform: scale(1.05); /* Змінено transform для кнопки */
+             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         }
         #loading-status {
             font-size: 0.9em;
@@ -169,7 +182,7 @@
         <div id="answerButtons"></div>
         <p id="feedbackMessage"></p>
         <p id="quizResult" style="display:none;"></p>
-        <button id="restartQuizBtn" class="ui-btn" style="display:none;">Почати вікторину знову!</button>
+        <button id="restartQuizBtn" style="display:none;">Почати вікторину знову!</button>
     </div>
 
     <button id="startQuizBtn" class="ui-btn">🌍 Розпочати вікторину "Планета Миру"!</button>
@@ -336,7 +349,6 @@
         }
 
         let resourcesLoaded = 0;
-        // Зменшили загальну кількість ресурсів, оскільки аудіофайли були видалені.
         const totalResources = 4;
 
         function updateLoadingStatus(message) {
@@ -363,8 +375,6 @@
             };
         });
         
-        // Видалили код, пов'язаний із завантаженням аудіо.
-
         targetEntity.addEventListener('targetFound', () => {
             loader.style.display = 'none';
             arMarkerFound = true;
@@ -432,4 +442,3 @@
     </script>
 </body>
 </html>
-
