@@ -62,8 +62,6 @@
         }
         .ui-btn {
             position: fixed;
-            left: 50%;
-            transform: translateX(-50%);
             padding: 16px 30px;
             border-radius: 40px;
             font-size: 1.2em;
@@ -77,11 +75,25 @@
             display: none;
             font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
             text-transform: none;
+            display: none; /* Приховуємо кнопки за замовчуванням */
         }
         #startQuizBtn {
             bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
             background: linear-gradient(45deg, #4CAF50, #8BC34A);
             color: white;
+        }
+        #youtubeBtn {
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #FF0000, #CD201F);
+            color: white;
+        }
+        .ui-btn:hover {
+            transform: scale(1.05) translateX(-50%);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         }
         #quizContainer {
             position: fixed;
@@ -162,6 +174,7 @@
     </div>
 
     <button id="startQuizBtn" class="ui-btn">🌍 Розпочати вікторину "Планета Миру"!</button>
+    <a href="https://www.youtube.com/@23SmartLessa32" target="_blank" id="youtubeBtn" class="ui-btn">📺 YouTube</a>
 
     <a-scene
         mindar-image="imageTargetSrc: ./targets.mind;"
@@ -227,6 +240,7 @@
         const videoPlane = document.querySelector('#video-plane');
         const arVideo = document.querySelector('#ar-video');
         const startQuizBtn = document.querySelector('#startQuizBtn');
+        const youtubeBtn = document.querySelector('#youtubeBtn');
         const quizContainer = document.querySelector('#quizContainer');
         const quizQuestion = document.querySelector('#quizQuestion');
         const answerButtons = document.querySelector('#answerButtons');
@@ -270,6 +284,7 @@
             isQuizActive = true;
             quizContainer.style.display = 'flex';
             startQuizBtn.style.display = 'none';
+            youtubeBtn.style.display = 'none';
             videoPlane.setAttribute('visible', 'false');
             peacePlanet.setAttribute('visible', 'true');
             if (!quizMusic.muted) {
@@ -379,6 +394,7 @@
             arMarkerFound = true;
             if (!isQuizActive) {
                 startQuizBtn.style.display = 'block';
+                youtubeBtn.style.display = 'block';
                 videoPlane.setAttribute('visible', 'true');
                 if (arVideo.paused) {
                     arVideo.play().catch(e => console.warn("Автоматичне відтворення заблоковано. Натисніть кнопку 'Грати'.", e));
@@ -394,6 +410,7 @@
             arMarkerFound = false;
             if (!isQuizActive) {
                 startQuizBtn.style.display = 'none';
+                youtubeBtn.style.display = 'none';
                 videoPlane.setAttribute('visible', 'false');
                 arVideo.pause();
                 arVideo.currentTime = 0;
@@ -421,6 +438,7 @@
             feedbackMessage.style.display = 'block';
             if (arMarkerFound) {
                 startQuizBtn.style.display = 'block';
+                youtubeBtn.style.display = 'block';
                 videoPlane.setAttribute('visible', 'true');
                 arVideo.play().catch(e => console.warn("Не вдалося відтворити AR-відео:", e));
                 peacePlanet.setAttribute('visible', 'false');
