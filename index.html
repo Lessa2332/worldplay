@@ -145,10 +145,9 @@
         #quizResult {
             font-size: 1.5em;
             margin-top: 30px;
-            margin-bottom: 20px; /* Додано відступ, щоб кнопка не прилягала впритул */
+            margin-bottom: 20px;
         }
         #restartQuizBtn {
-            /* Видалено position: fixed; та інші властивості, що спричиняли перекриття */
             background: linear-gradient(45deg, #FF6F00, #FFD700);
             color: white;
             padding: 16px 30px;
@@ -161,8 +160,8 @@
             transition: all 0.2s ease;
         }
         #restartQuizBtn:hover {
-             transform: scale(1.05); /* Змінено transform для кнопки */
-             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         }
         #loading-status {
             font-size: 0.9em;
@@ -198,9 +197,6 @@
     >
         <a-assets>
             <video id="ar-video" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/ar-vid.mp4" loop="true" crossorigin="anonymous"></video>
-            <img id="tree-img" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/tree.png" crossorigin="anonymous" />
-            <img id="dove-img" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/dove.png" crossorigin="anonymous" />
-            <img id="rainbow-img" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/rainbow.png" crossorigin="anonymous" />
         </a-assets>
 
         <a-camera
@@ -219,18 +215,6 @@
                     rotation="0 0 0"
                     visible="false"
                 ></a-video>
-
-                <a-sphere
-                    id="peace-planet"
-                    radius="0.3"
-                    position="0 0.5 0.05"
-                    color="#808080"
-                    visible="false"
-                ></a-sphere>
-
-                <a-image id="planet-tree" src="#tree-img" position="-0.2 0.7 0.1" rotation="0 0 0" scale="0.3 0.3 0.3" visible="false"></a-image>
-                <a-image id="planet-dove" src="#dove-img" position="0.3 0.7 0.1" rotation="0 0 0" scale="0.25 0.25 0.25" visible="false"></a-image>
-                <a-image id="planet-rainbow" src="#rainbow-img" position="0 0.9 0" rotation="0 0 0" scale="0.5 0.5 0.5" visible="false"></a-image>
             </a-entity>
         </a-entity>
     </a-scene>
@@ -250,11 +234,6 @@
         const quizResult = document.querySelector('#quizResult');
         const restartQuizBtn = document.querySelector('#restartQuizBtn');
 
-        const peacePlanet = document.querySelector('#peace-planet');
-        const planetTree = document.querySelector('#planet-tree');
-        const planetDove = document.querySelector('#planet-dove');
-        const planetRainbow = document.querySelector('#planet-rainbow');
-
         let arMarkerFound = false;
         let currentQuestionIndex = 0;
         let correctAnswersCount = 0;
@@ -273,23 +252,12 @@
             { question: "Як ти можеш сприяти миру?", answers: ["Лаятися", "Допомагати іншим", "Битися", "Сваритися"], correct: 1 }
         ];
 
-        function updatePlanetCustomization() {
-            peacePlanet.setAttribute('visible', 'true');
-            const color = ['#808080', '#4CAF50', '#8BC34A', '#AEEA00', '#FFEB3B', '#FFD700', '#FF8C00', '#FF4500', '#B22222', '#8B0000', '#4B0082', '#40E0D0', '#32CD32'];
-            peacePlanet.setAttribute('color', color[correctAnswersCount] || '#FFEB3B');
-
-            planetTree.setAttribute('visible', correctAnswersCount >= 2);
-            planetDove.setAttribute('visible', correctAnswersCount >= 5);
-            planetRainbow.setAttribute('visible', correctAnswersCount >= 9);
-        }
-
         function startQuiz() {
             isQuizActive = true;
             quizContainer.style.display = 'flex';
             startQuizBtn.style.display = 'none';
             youtubeBtn.style.display = 'none';
             videoPlane.setAttribute('visible', 'false');
-            peacePlanet.setAttribute('visible', 'true');
             
             currentQuestionIndex = 0;
             correctAnswersCount = 0;
@@ -297,7 +265,6 @@
             restartQuizBtn.style.display = 'none';
             feedbackMessage.textContent = '';
             displayQuestion();
-            updatePlanetCustomization();
         }
 
         function displayQuestion() {
@@ -326,7 +293,6 @@
             } else {
                 feedbackMessage.textContent = `❌ Неправильно. Правильна відповідь: "${q.answers[q.correct]}"`;
             }
-            updatePlanetCustomization();
 
             Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
 
@@ -342,14 +308,14 @@
             quizQuestion.textContent = "Вікторина завершена!";
             answerButtons.innerHTML = '';
             feedbackMessage.style.display = 'none';
-            quizResult.textContent = `Ти відповів правильно на ${correctAnswersCount} з ${quizQuestions.length} запитань! Твоя планета миру виглядає чудово!`;
+            quizResult.textContent = `Ти відповів правильно на ${correctAnswersCount} з ${quizQuestions.length} запитань!`;
             quizResult.style.display = 'block';
             restartQuizBtn.style.display = 'block';
             isQuizActive = false;
         }
 
         let resourcesLoaded = 0;
-        const totalResources = 4;
+        const totalResources = 1;
 
         function updateLoadingStatus(message) {
             resourcesLoaded++;
@@ -364,16 +330,6 @@
             console.error("Помилка завантаження відео:", e);
             loadingStatus.textContent = "Помилка завантаження відео! Перевірте посилання.";
         };
-
-        const imageAssets = ['tree-img', 'dove-img', 'rainbow-img'];
-        imageAssets.forEach(id => {
-            const img = document.querySelector(`#${id}`);
-            img.onload = () => updateLoadingStatus(`Зображення ${id} завантажено`);
-            img.onerror = () => {
-                console.error(`Помилка завантаження зображення: ${id}`);
-                loadingStatus.textContent = `Помилка завантаження зображення: ${id}. Перевірте посилання.`;
-            };
-        });
         
         targetEntity.addEventListener('targetFound', () => {
             loader.style.display = 'none';
@@ -387,8 +343,6 @@
                 }
             } else {
                 videoPlane.setAttribute('visible', 'false');
-                peacePlanet.setAttribute('visible', 'true');
-                updatePlanetCustomization();
             }
         });
 
@@ -400,11 +354,6 @@
                 videoPlane.setAttribute('visible', 'false');
                 arVideo.pause();
                 arVideo.currentTime = 0;
-            } else {
-                peacePlanet.setAttribute('visible', 'false');
-                planetTree.setAttribute('visible', 'false');
-                planetDove.setAttribute('visible', 'false');
-                planetRainbow.setAttribute('visible', 'false');
             }
         });
 
@@ -427,10 +376,6 @@
                 youtubeBtn.style.display = 'block';
                 videoPlane.setAttribute('visible', 'true');
                 arVideo.play().catch(e => console.warn("Не вдалося відтворити AR-відео:", e));
-                peacePlanet.setAttribute('visible', 'false');
-                planetTree.setAttribute('visible', 'false');
-                planetDove.setAttribute('visible', 'false');
-                planetRainbow.setAttribute('visible', 'false');
             } else {
                 loader.style.display = 'flex';
             }
@@ -438,7 +383,6 @@
             currentQuestionIndex = 0;
             isQuizActive = false;
         });
-
     </script>
 </body>
 </html>
