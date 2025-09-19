@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎉 AR Вікторина "Планета Миру" — Lessa2332 🎈</title>
+    <title>🎉 AR-SmartLessa 🎈</title>
 
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
@@ -57,11 +56,12 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        .pulse {
-            animation: pulse 2s infinite;
-        }
+        .pulse { animation: pulse 2s infinite; }
+        
         .ui-btn {
             position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
             padding: 16px 30px;
             border-radius: 40px;
             font-size: 1.2em;
@@ -76,81 +76,46 @@
             font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
             text-transform: none;
         }
-        #startQuizBtn {
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(45deg, #4CAF50, #8BC34A);
-            color: white;
-        }
+
         #youtubeBtn {
             bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
             background: linear-gradient(45deg, #FF0000, #CD201F);
             color: white;
         }
+
         .ui-btn:hover {
             transform: scale(1.05) translateX(-50%);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         }
-        #quizContainer {
+
+        .video-controls {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(74, 21, 75, 0.95);
-            color: white;
-            z-index: 10001;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
             display: none;
+            flex-direction: row;
+            gap: 10px;
         }
-        #quizContainer h2 {
-            font-size: 1.8em;
-            margin-bottom: 30px;
-        }
-        #quizContainer .answer-btn {
-            background: linear-gradient(45deg, #00BCD4, #00C853);
-            color: white;
+        
+        .video-controls button {
+            padding: 10px 20px;
             border: none;
-            border-radius: 25px;
-            padding: 15px 25px;
-            margin: 10px 0;
-            font-size: 1.1em;
+            border-radius: 15px;
             cursor: pointer;
-            width: 80%;
-            max-width: 400px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-family: 'Comic Neue', cursive;
-            text-transform: none;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            font-size: 1em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
         }
-        #quizContainer .answer-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        .video-controls button:hover {
+            transform: scale(1.05);
         }
-        #feedbackMessage {
-            margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #FFEB3B;
-        }
-        #quizResult {
-            font-size: 1.5em;
-            margin-top: 30px;
-        }
-        #restartQuizBtn {
-            margin-top: 30px;
-            background: linear-gradient(45deg, #FF6F00, #FFD700);
-            color: white;
-        }
+        #play-btn { background-color: #4CAF50; color: white; }
+        #pause-btn { background-color: #2196F3; color: white; }
+        #stop-btn { background-color: #f44336; color: white; }
+        
         #loading-status {
             font-size: 0.9em;
             margin-top: 10px;
@@ -160,20 +125,9 @@
 </head>
 <body>
     <div class="arjs-loader" id="loader">
-        <div class="pulse">🎉 Ласкаво просимо! Наведіть камеру на маркер, щоб побачити AR-контент! 🎈</div>
-        <div id="loading-status">Завантаження ресурсів...</div>
+        <div class="pulse">🎉 З ДНЕМ МИРУ!! Наведіть камеру на маркер! 🎈</div>
+        <div id="loading-status">Завантаження AR-відео...</div>
     </div>
-
-    <div id="quizContainer">
-        <h2 id="quizQuestion"></h2>
-        <div id="answerButtons"></div>
-        <p id="feedbackMessage"></p>
-        <p id="quizResult" style="display:none;"></p>
-        <button id="restartQuizBtn" class="ui-btn" style="display:none;">Почати вікторину знову!</button>
-    </div>
-
-    <button id="startQuizBtn" class="ui-btn">🌍 Розпочати вікторину "Планета Миру"!</button>
-    <a href="https://www.youtube.com/@23SmartLessa32" target="_blank" id="youtubeBtn" class="ui-btn">📺 YouTube</a>
 
     <a-scene
         mindar-image="imageTargetSrc: ./targets.mind;"
@@ -185,12 +139,6 @@
     >
         <a-assets>
             <video id="ar-video" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/ar-vid.mp4" loop="true" crossorigin="anonymous"></video>
-            <img id="tree-img" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/tree.png" crossorigin="anonymous" />
-            <img id="dove-img" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/dove.png" crossorigin="anonymous" />
-            <img id="rainbow-img" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/rainbow.png" crossorigin="anonymous" />
-            <audio id="correct-sound" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/correct.mp3" preload="auto"></audio>
-            <audio id="wrong-sound" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/wrong.mp3" preload="auto"></audio>
-            <audio id="quiz-music" src="https://raw.githubusercontent.com/Lessa2332/worldplay/main/quiz-bg.mp3" loop="true" preload="auto" muted></audio>
         </a-assets>
 
         <a-camera
@@ -199,269 +147,86 @@
         ></a-camera>
 
         <a-entity mindar-image-target="targetIndex: 0">
-            <a-entity id="ar-content">
-                <a-video
-                    id="video-plane"
-                    src="#ar-video"
-                    position="0 0 0.01"
-                    height="1"
-                    width="1.777"
-                    rotation="0 0 0"
-                    visible="false"
-                ></a-video>
-
-                <a-sphere
-                    id="peace-planet"
-                    radius="0.3"
-                    position="0 0.5 0.05"
-                    color="#808080"
-                    visible="false"
-                ></a-sphere>
-
-                <a-image id="planet-tree" src="#tree-img" position="-0.2 0.7 0.1" rotation="0 0 0" scale="0.3 0.3 0.3" visible="false"></a-image>
-                <a-image id="planet-dove" src="#dove-img" position="0.3 0.7 0.1" rotation="0 0 0" scale="0.25 0.25 0.25" visible="false"></a-image>
-                <a-image id="planet-rainbow" src="#rainbow-img" position="0 0.9 0" rotation="0 0 0" scale="0.5 0.5 0.5" visible="false"></a-image>
-            </a-entity>
+            <a-video
+                id="video-plane"
+                src="#ar-video"
+                position="0 0 0"
+                height="1"
+                width="1.777"
+                rotation="0 0 0"
+                visible="false"
+            ></a-video>
         </a-entity>
     </a-scene>
 
-    <script>
-        function playSound(audioElement) {
-            if (audioElement && !audioElement.muted) {
-                audioElement.currentTime = 0;
-                audioElement.play().catch(e => console.warn("Не вдалося відтворити звук:", e));
-            }
-        }
+    <div class="video-controls" id="video-controls">
+        <button id="play-btn">▶️ Грати</button>
+        <button id="pause-btn">⏸️ Пауза</button>
+        <button id="stop-btn">⏹️ Стоп</button>
+    </div>
 
+    <a href="https://www.youtube.com/@23SmartLessa32" target="_blank" id="youtubeBtn" class="ui-btn">📺 YouTube</a>
+
+    <script>
         const loader = document.querySelector('#loader');
         const loadingStatus = document.querySelector('#loading-status');
         const targetEntity = document.querySelector('a-entity[mindar-image-target]');
         const videoPlane = document.querySelector('#video-plane');
         const arVideo = document.querySelector('#ar-video');
-        const startQuizBtn = document.querySelector('#startQuizBtn');
+        const videoControls = document.querySelector('#video-controls');
+        const playBtn = document.querySelector('#play-btn');
+        const pauseBtn = document.querySelector('#pause-btn');
+        const stopBtn = document.querySelector('#stop-btn');
         const youtubeBtn = document.querySelector('#youtubeBtn');
-        const quizContainer = document.querySelector('#quizContainer');
-        const quizQuestion = document.querySelector('#quizQuestion');
-        const answerButtons = document.querySelector('#answerButtons');
-        const feedbackMessage = document.querySelector('#feedbackMessage');
-        const quizResult = document.querySelector('#quizResult');
-        const restartQuizBtn = document.querySelector('#restartQuizBtn');
 
-        const peacePlanet = document.querySelector('#peace-planet');
-        const planetTree = document.querySelector('#planet-tree');
-        const planetDove = document.querySelector('#planet-dove');
-        const planetRainbow = document.querySelector('#planet-rainbow');
-
-        const correctSound = document.querySelector('#correct-sound');
-        const wrongSound = document.querySelector('#wrong-sound');
-        const quizMusic = document.querySelector('#quiz-music');
-
-        let arMarkerFound = false;
-        let currentQuestionIndex = 0;
-        let correctAnswersCount = 0;
-        let isQuizActive = false;
-
-        const quizQuestions = [
-            { question: "Що символізує білий голуб?", answers: ["Любов", "Мир", "Свободу", "Радість"], correct: 1 },
-            { question: "Яке свято відзначається 21 вересня?", answers: ["День Землі", "День Миру", "День Подяки", "День Матері"], correct: 1 },
-            { question: "Яка рослина є символом миру?", answers: ["Троянда", "Соняшник", "Оливкова гілка", "Дуб"], correct: 2 },
-            { question: "Яка міжнародна організація сприяє миру у світі?", answers: ["ООН", "НАТО", "ЄС", "ВООЗ"], correct: 0 },
-            { question: "Що означає слово 'мир'?", answers: ["Конфлікт", "Спокій, відсутність війни", "Розбіжності", "Суперечка"], correct: 1 },
-            { question: "Що означає слово «дружба»?", answers: ["Суперечка", "Взаємодопомога", "Бійка", "Змагання"], correct: 1 },
-            { question: "Який колір найчастіше асоціюється з миром?", answers: ["Червоний", "Синій", "Білий", "Зелений"], correct: 2 },
-            { question: "Який символ використовують для позначення миру?", answers: ["Серце", "Палець вгору", "Знак «Мир»", "Блискавка"], correct: 2 },
-            { question: "Де зустрічаються люди з усього світу, щоб говорити про мир?", answers: ["У школі", "На стадіоні", "В ООН", "У магазині"], correct: 2 },
-            { question: "Як ти можеш сприяти миру?", answers: ["Лаятися", "Допомагати іншим", "Битися", "Сваритися"], correct: 1 },
-            { question: "Що ми можемо робити разом, щоб жити в мирі?", answers: ["Ділитися іграшками", "Забирати чуже", "Обманювати", "Кричати"], correct: 0 },
-            { question: "Що трапляється, коли люди не погоджуються, але розмовляють без бійки?", answers: ["Нічого", "Вони сваряться", "Вони знаходять рішення", "Вони стають ворогами"], correct: 2 }
-        ];
-
-        function updatePlanetCustomization() {
-            peacePlanet.setAttribute('visible', 'true');
-            const color = ['#808080', '#4CAF50', '#8BC34A', '#AEEA00', '#FFEB3B', '#FFD700', '#FF8C00', '#FF4500', '#B22222', '#8B0000', '#4B0082', '#40E0D0', '#32CD32'];
-            peacePlanet.setAttribute('color', color[correctAnswersCount] || '#FFEB3B');
-
-            planetTree.setAttribute('visible', correctAnswersCount >= 2);
-            planetDove.setAttribute('visible', correctAnswersCount >= 5);
-            planetRainbow.setAttribute('visible', correctAnswersCount >= 9);
-        }
-
-        function startQuiz() {
-            isQuizActive = true;
-            quizContainer.style.display = 'flex';
-            startQuizBtn.style.display = 'none';
-            youtubeBtn.style.display = 'none';
-            videoPlane.setAttribute('visible', 'false');
-            peacePlanet.setAttribute('visible', 'true');
-            if (!quizMusic.muted) {
-                playSound(quizMusic);
-            }
-
-            currentQuestionIndex = 0;
-            correctAnswersCount = 0;
-            quizResult.style.display = 'none';
-            restartQuizBtn.style.display = 'none';
-            feedbackMessage.textContent = '';
-            displayQuestion();
-            updatePlanetCustomization();
-        }
-
-        function displayQuestion() {
-            if (currentQuestionIndex < quizQuestions.length) {
-                const q = quizQuestions[currentQuestionIndex];
-                quizQuestion.textContent = q.question;
-                answerButtons.innerHTML = '';
-
-                q.answers.forEach((answer, index) => {
-                    const button = document.createElement('button');
-                    button.textContent = answer;
-                    button.classList.add('answer-btn');
-                    button.addEventListener('click', () => checkAnswer(index));
-                    answerButtons.appendChild(button);
-                });
-            } else {
-                showQuizResults();
-            }
-        }
-
-        function checkAnswer(selectedIndex) {
-            const q = quizQuestions[currentQuestionIndex];
-            if (selectedIndex === q.correct) {
-                feedbackMessage.textContent = "✅ Правильно! Молодець!";
-                correctAnswersCount++;
-                playSound(correctSound);
-            } else {
-                feedbackMessage.textContent = `❌ Неправильно. Правильна відповідь: "${q.answers[q.correct]}"`;
-                playSound(wrongSound);
-            }
-            updatePlanetCustomization();
-
-            Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
-
-            setTimeout(() => {
-                currentQuestionIndex++;
-                feedbackMessage.textContent = '';
-                Array.from(answerButtons.children).forEach(btn => btn.disabled = false);
-                displayQuestion();
-            }, 1500);
-        }
-
-        function showQuizResults() {
-            quizQuestion.textContent = "Вікторина завершена!";
-            answerButtons.innerHTML = '';
-            feedbackMessage.style.display = 'none';
-            quizResult.textContent = `Ти відповів правильно на ${correctAnswersCount} з ${quizQuestions.length} запитань! Твоя планета миру виглядає чудово!`;
-            quizResult.style.display = 'block';
-            restartQuizBtn.style.display = 'block';
-            quizMusic.pause();
-            quizMusic.currentTime = 0;
-            isQuizActive = false;
-        }
-
-        let resourcesLoaded = 0;
-        const totalResources = 6;
-
-        function updateLoadingStatus(message) {
-            resourcesLoaded++;
-            loadingStatus.textContent = `Завантаження ресурсів (${resourcesLoaded}/${totalResources}): ${message}`;
-            if (resourcesLoaded === totalResources) {
-                loadingStatus.textContent = "Усі ресурси завантажено. Готові до запуску!";
-            }
-        }
-
-        arVideo.oncanplaythrough = () => updateLoadingStatus("Відео завантажено");
-        arVideo.onerror = (e) => {
-            console.error("Помилка завантаження відео:", e);
-            loadingStatus.textContent = "Помилка завантаження відео! Перевірте посилання.";
+        // Перевірка стану завантаження відео
+        arVideo.oncanplaythrough = () => {
+            loadingStatus.textContent = "Відео завантажено, готові до запуску!";
+            console.log("✅ Відео успішно завантажено.");
         };
 
-        const imageAssets = ['tree-img', 'dove-img', 'rainbow-img'];
-        imageAssets.forEach(id => {
-            const img = document.querySelector(`#${id}`);
-            img.onload = () => updateLoadingStatus(`Зображення ${id} завантажено`);
-            img.onerror = () => {
-                console.error(`Помилка завантаження зображення: ${id}`);
-                loadingStatus.textContent = `Помилка завантаження зображення: ${id}. Перевірте посилання.`;
-            };
-        });
-
-        const audioAssets = ['correct-sound', 'wrong-sound', 'quiz-music'];
-        audioAssets.forEach(id => {
-            const audio = document.querySelector(`#${id}`);
-            audio.oncanplaythrough = () => updateLoadingStatus(`Звук ${id} завантажено`);
-            audio.onerror = () => {
-                console.error(`Помилка завантаження звуку: ${id}`);
-                loadingStatus.textContent = `Помилка завантаження звуку: ${id}. Перевірте посилання.`;
-            };
-        });
+        arVideo.onerror = (e) => {
+            console.error("❌ Помилка завантаження відео:", e);
+            loadingStatus.textContent = "Помилка! Відео не завантажилося. Перевірте посилання.";
+        };
 
         targetEntity.addEventListener('targetFound', () => {
+            console.log("🎯 Маркер знайдено! Показуємо відео.");
             loader.style.display = 'none';
-            arMarkerFound = true;
-            if (!isQuizActive) {
-                startQuizBtn.style.display = 'block';
-                youtubeBtn.style.display = 'block';
-                videoPlane.setAttribute('visible', 'true');
-                if (arVideo.paused) {
-                    arVideo.play().catch(e => console.warn("Автоматичне відтворення заблоковано. Натисніть кнопку 'Грати'.", e));
-                }
-            } else {
-                videoPlane.setAttribute('visible', 'false');
-                peacePlanet.setAttribute('visible', 'true');
-                updatePlanetCustomization();
+            videoPlane.setAttribute('visible', 'true');
+            videoControls.style.display = 'flex';
+            youtubeBtn.style.display = 'block';
+
+            if (arVideo.paused) {
+                arVideo.play().catch(e => {
+                    console.log("🔇 Автоматичне відтворення заблоковано. Натисніть кнопку 'Грати'.", e);
+                });
             }
         });
 
         targetEntity.addEventListener('targetLost', () => {
-            arMarkerFound = false;
-            if (!isQuizActive) {
-                startQuizBtn.style.display = 'none';
-                youtubeBtn.style.display = 'none';
-                videoPlane.setAttribute('visible', 'false');
-                arVideo.pause();
-                arVideo.currentTime = 0;
-            } else {
-                peacePlanet.setAttribute('visible', 'false');
-                planetTree.setAttribute('visible', 'false');
-                planetDove.setAttribute('visible', 'false');
-                planetRainbow.setAttribute('visible', 'false');
-            }
+            console.log("❌ Маркер втрачено! Ховаємо відео.");
+            videoPlane.setAttribute('visible', 'false');
+            videoControls.style.display = 'none';
+            youtubeBtn.style.display = 'none';
+            arVideo.pause();
         });
 
-        startQuizBtn.addEventListener('click', () => {
-            if (arMarkerFound) {
-                arVideo.pause();
-                arVideo.currentTime = 0;
-                startQuiz();
-            } else {
-                alert("Будь ласка, наведіть камеру на маркер, щоб розпочати вікторину!");
-            }
+        playBtn.addEventListener('click', () => {
+            console.log("▶️ Запуск відео.");
+            arVideo.play().catch(e => console.log("🔇 Відео не запустилося:", e));
         });
 
-        restartQuizBtn.addEventListener('click', () => {
-            quizContainer.style.display = 'none';
-            restartQuizBtn.style.display = 'none';
-            feedbackMessage.style.display = 'block';
-            if (arMarkerFound) {
-                startQuizBtn.style.display = 'block';
-                youtubeBtn.style.display = 'block';
-                videoPlane.setAttribute('visible', 'true');
-                arVideo.play().catch(e => console.warn("Не вдалося відтворити AR-відео:", e));
-                peacePlanet.setAttribute('visible', 'false');
-                planetTree.setAttribute('visible', 'false');
-                planetDove.setAttribute('visible', 'false');
-                planetRainbow.setAttribute('visible', 'false');
-            } else {
-                loader.style.display = 'flex';
-            }
-            correctAnswersCount = 0;
-            currentQuestionIndex = 0;
-            isQuizActive = false;
-            quizMusic.muted = true;
-            quizMusic.currentTime = 0;
+        pauseBtn.addEventListener('click', () => {
+            console.log("⏸️ Пауза відео.");
+            arVideo.pause();
         });
 
-        quizMusic.muted = true;
+        stopBtn.addEventListener('click', () => {
+            console.log("⏹️ Зупинка відео.");
+            arVideo.pause();
+            arVideo.currentTime = 0;
+        });
     </script>
 </body>
 </html>
