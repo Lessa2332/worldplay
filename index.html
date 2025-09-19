@@ -75,7 +75,6 @@
             display: none;
             font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
             text-transform: none;
-            display: none; /* Приховуємо кнопки за замовчуванням */
         }
         #startQuizBtn {
             bottom: 100px;
@@ -267,17 +266,24 @@
             { question: "Яке свято відзначається 21 вересня?", answers: ["День Землі", "День Миру", "День Подяки", "День Матері"], correct: 1 },
             { question: "Яка рослина є символом миру?", answers: ["Троянда", "Соняшник", "Оливкова гілка", "Дуб"], correct: 2 },
             { question: "Яка міжнародна організація сприяє миру у світі?", answers: ["ООН", "НАТО", "ЄС", "ВООЗ"], correct: 0 },
-            { question: "Що означає слово 'мир'?", answers: ["Конфлікт", "Спокій, відсутність війни", "Розбіжності", "Суперечка"], correct: 1 }
+            { question: "Що означає слово 'мир'?", answers: ["Конфлікт", "Спокій, відсутність війни", "Розбіжності", "Суперечка"], correct: 1 },
+            { question: "Що означає слово «дружба»?", answers: ["Суперечка", "Взаємодопомога", "Бійка", "Змагання"], correct: 1 },
+            { question: "Який колір найчастіше асоціюється з миром?", answers: ["Червоний", "Синій", "Білий", "Зелений"], correct: 2 },
+            { question: "Який символ використовують для позначення миру?", answers: ["Серце", "Палець вгору", "Знак «Мир»", "Блискавка"], correct: 2 },
+            { question: "Де зустрічаються люди з усього світу, щоб говорити про мир?", answers: ["У школі", "На стадіоні", "В ООН", "У магазині"], correct: 2 },
+            { question: "Як ти можеш сприяти миру?", answers: ["Лаятися", "Допомагати іншим", "Битися", "Сваритися"], correct: 1 },
+            { question: "Що ми можемо робити разом, щоб жити в мирі?", answers: ["Ділитися іграшками", "Забирати чуже", "Обманювати", "Кричати"], correct: 0 },
+            { question: "Що трапляється, коли люди не погоджуються, але розмовляють без бійки?", answers: ["Нічого", "Вони сваряться", "Вони знаходять рішення", "Вони стають ворогами"], correct: 2 }
         ];
 
         function updatePlanetCustomization() {
             peacePlanet.setAttribute('visible', 'true');
-            const color = ['#808080', '#4CAF50', '#8BC34A', '#AEEA00', '#FFEB3B'];
+            const color = ['#808080', '#4CAF50', '#8BC34A', '#AEEA00', '#FFEB3B', '#FFD700', '#FF8C00', '#FF4500', '#B22222', '#8B0000', '#4B0082', '#40E0D0', '#32CD32'];
             peacePlanet.setAttribute('color', color[correctAnswersCount] || '#FFEB3B');
 
             planetTree.setAttribute('visible', correctAnswersCount >= 2);
-            planetDove.setAttribute('visible', correctAnswersCount >= 3);
-            planetRainbow.setAttribute('visible', correctAnswersCount >= 4);
+            planetDove.setAttribute('visible', correctAnswersCount >= 5);
+            planetRainbow.setAttribute('visible', correctAnswersCount >= 9);
         }
 
         function startQuiz() {
