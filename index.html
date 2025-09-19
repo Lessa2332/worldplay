@@ -1,245 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AR Ghost - Крок за кроком</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎉 AR-Відео — Lessa2332 🎈</title>
 
-    <!-- A-Frame -->
-    <script src="https://cdn.jsdelivr.net/npm/aframe@1.6.0/dist/aframe-master.min.js"></script>
-    <!-- AR.js з підтримкою NFT -->
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 
     <style>
-        body {
+        html, body {
             margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-            font-family: Arial, sans-serif;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            color: white;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            text-transform: none;
+        }
+        a-scene {
+            width: 100% !important;
+            height: 100% !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: transparent;
+        }
+        .arjs-loader {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(135, 206, 235, 0.6);
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-        }
-
-        #start-button {
-            padding: 16px 32px;
-            background: #ff5252;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            z-index: 10000;
-            transition: all 0.3s ease;
-        }
-        #start-button:hover {
-            background: #ff0000;
-            transform: scale(1.05);
-        }
-
-        #hint {
-            position: absolute;
-            top: 20px;
+            color: #000000;
+            font-size: 1.5em;
             text-align: center;
-            font-size: 18px;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 20px;
-            border-radius: 20px;
-            display: none;
-            z-index: 10000;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+            text-transform: none;
         }
-
-        #audio-button {
-            position: absolute;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            background: #ff5252;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 10000;
-            display: none;
-            transition: all 0.3s ease;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
-        #audio-button:hover {
-            background: #ff0000;
-            transform: translateX(-50%) scale(1.05);
-        }
-
-        #youtube-button {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            background: #ff0000;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
-        #youtube-button:hover {
-            background: #cc0000;
-            transform: translateX(-50%) scale(1.05);
-        }
-        #youtube-button svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .arjs-loader {
-            display: none !important;
-        }
-
-        .a-canvas {
-            width: 100vw !important;
-            height: 100vh !important;
+        .pulse {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
 <body>
-    <!-- Кнопка для початку AR -->
-    <button id="start-button">👻 Запустити AR-досвід</button>
-
-    <!-- Підказка -->
-    <div id="hint">👆 Наведіть камеру на маркер</div>
-
-    <!-- Кнопка аудіо -->
-    <div id="audio-button">
-        <button id="play-audio-btn">🔊 Послухати повідомлення</button>
+    <div class="arjs-loader" id="loader">
+        <div class="pulse">🎉 Ласкаво просимо! Наведіть камеру на маркер! 🎈</div>
     </div>
 
-    <!-- Кнопка YouTube -->
-    <a href="https://www.youtube.com/@23SmartLessa32" target="_blank" id="youtube-button">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.615 3.184c-3.604-.246-10.815-.245-14.419 0C2.38 3.372.995 5.2 1 8.273c.006 3.07 1.389 4.897 4.215 5.084 3.6.245 10.815.245 14.419 0 2.826-.187 4.215-2.014 4.221-5.085.005-3.073-1.379-4.899-4.215-5.086zM9.6 15.392V8.608l6.318 3.392L9.6 15.392z"/>
-        </svg>
-        SmartLessa
-    </a>
-
-    <!-- Аудіо -->
-    <audio id="ghost-audio" src="https://raw.githack.com/Lessa2332/77/refs/heads/main/audio/ghost_message.mp3" preload="auto" crossorigin="anonymous"></audio>
-
-    <!-- Сцена (спочатку прихована) -->
     <a-scene
-        id="ar-scene"
+        mindar-image="imageTargetSrc: ./targets.mind;"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+        loading-screen="enabled: false"
         embedded
-        arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
-        renderer="antialias: true; alpha: true; precision: medium;"
-        style="display: none; width: 100%; height: 100%;"
+        renderer="colorManagement: true; physicallyCorrectLights: true;"
     >
         <a-assets>
-            <!-- ✅ Замінено на гарантовано робочий лого A-Frame -->
-            <img id="ghost-single" src="https://cdn.aframe.io/aframe-logo.png" crossorigin="anonymous">
+            <video id="ar-video" src="https://raw.githubusercontent.com/Lessa2332/ar-vid.mp4" loop="true" crossorigin="anonymous"></video>
         </a-assets>
 
-        <a-nft
-            id="nft-marker"
-            type="nft"
-            url="https://raw.githack.com/Lessa2332/77/refs/heads/main/dataNFT/ghost_marker/ghost_marker"
+        <a-camera
+            look-controls="enabled: false"
+            position="0 0 0"
         >
-            <a-plane
-                id="ghost-plane"
-                src="#ghost-single"
-                position="0 0.1 -0.3"
-                rotation="-90 0 0"
-                width="0.8"
-                height="0.47"
-                material="side: double; shader: standard; transparent: true; alphaTest: 0.1;"
-                visible="false"
-            ></a-plane>
-        </a-nft>
+        </a-camera>
 
-        <a-entity camera></a-entity>
+        <a-entity mindar-image-target="targetIndex: 0">
+            <a-video
+                id="video-plane"
+                src="#ar-video"
+                position="0 0 0"
+                height="1"
+                width="1.777"
+                rotation="0 0 0"
+                visible="false"
+            ></a-video>
+        </a-entity>
     </a-scene>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const startButton = document.getElementById('start-button');
-            const hint = document.getElementById('hint');
-            const audioButton = document.getElementById('audio-button');
-            const playAudioBtn = document.getElementById('play-audio-btn');
-            const audio = document.getElementById('ghost-audio');
-            const scene = document.getElementById('ar-scene');
-            const ghostPlane = document.getElementById('ghost-plane');
-            const nftMarker = document.getElementById('nft-marker');
-
-            // 1. Запуск AR при натисканні
-            startButton.addEventListener('click', function() {
-                startButton.style.display = 'none';
-                hint.style.display = 'block';
-                scene.style.display = 'block';
-            });
-
-            // 2. Відстеження маркера
-            if (nftMarker) {
-                nftMarker.addEventListener('markerFound', () => {
-                    console.log("✅ Маркер знайдено!");
-                    hint.innerText = "👻 Привид з'явився!";
-                    setTimeout(() => {
-                        if (ghostPlane) {
-                            ghostPlane.setAttribute('visible', true);
-                            console.log("🖼️ Привид показано");
-
-                            // ✅ Примусове оновлення текстури
-                            const material = ghostPlane.components.material.material;
-                            if (material && material.map) {
-                                material.map.needsUpdate = true;
-                                material.needsUpdate = true;
-                                console.log("🔄 Текстура примусово оновлена");
-                            }
-                        }
-                        setTimeout(() => {
-                            audioButton.style.display = 'block';
-                            hint.innerText = "Натисніть, щоб послухати повідомлення";
-                        }, 1500);
-                    }, 500);
-                });
-
-                nftMarker.addEventListener('markerLost', () => {
-                    console.log("❌ Маркер втрачено");
-                    hint.innerText = "👆 Наведіть камеру на маркер";
-                    audioButton.style.display = 'none';
-                    if (ghostPlane) {
-                        ghostPlane.setAttribute('visible', false);
-                    }
+        // Компонент A-Frame для відтворення відео по кліку (не обов'язково, але краще для сумісності)
+        AFRAME.registerComponent('play-on-click', {
+            init: function() {
+                const videoEl = document.querySelector('#ar-video');
+                this.el.addEventListener('click', () => {
+                    console.log("▶️ Клік по відео! Запускаємо відтворення.");
+                    videoEl.play();
                 });
             }
+        });
 
-            // 3. Відтворення аудіо
-            playAudioBtn.addEventListener('click', function() {
-                if (audio.paused) {
-                    audio.play().catch(e => {
-                        console.log("Audio play failed:", e);
-                        alert("Дозвольте відтворення звуку у браузері.");
-                    });
-                } else {
-                    audio.pause();
-                    audio.currentTime = 0;
-                }
-            });
+        // Основна логіка
+        const loader = document.querySelector('#loader');
+        const targetEntity = document.querySelector('a-entity[mindar-image-target]');
+        const videoPlane = document.querySelector('#video-plane');
+        const arVideo = document.querySelector('#ar-video');
+
+        targetEntity.addEventListener('targetFound', () => {
+            console.log("🎯 Маркер знайдено! Показуємо відео.");
+            loader.style.display = 'none';
+            videoPlane.setAttribute('visible', 'true');
+            if (arVideo.paused) {
+                arVideo.play().catch(e => console.log("🔇 Відео не запустилося:", e));
+            }
+        });
+
+        targetEntity.addEventListener('targetLost', () => {
+            console.log("❌ Маркер втрачено! Ховаємо відео.");
+            videoPlane.setAttribute('visible', 'false');
+            arVideo.pause();
+            arVideo.currentTime = 0; // Скидаємо відтворення на початок
         });
     </script>
 </body>
 </html>
+
